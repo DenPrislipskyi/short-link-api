@@ -2,8 +2,14 @@ services:
     short-link-api:
       build: .
       restart: unless-stopped
+      env_file:
+        - .env
       ports:
         - "8080:8080"
+      volumes:
+        - ./:/short-link-api
+      networks:
+        - short-net
       depends_on:
         db:
           condition: service_healthy
@@ -15,8 +21,28 @@ services:
         - "5434:5432"
       env_file:
         - .env
+      networks:
+        - short-net
       healthcheck:
         test: [ "CMD-SHELL", "pg_isready -d $$POSTGRES_DB -U $$POSTGRES_USER" ]
         interval: 10s
         timeout: 60s
         retries: 5
+
+    pgadmin:
+      image: dpage/pgadmin4:latest
+      restart: unless-stopped
+      ports:
+        - "5050:80"
+      env_file:
+        - .env
+      networks:
+        - short-net
+      depends_on:
+        db:
+          condition: service_healthy
+
+
+networks:
+  short-net:
+    name: short-net
