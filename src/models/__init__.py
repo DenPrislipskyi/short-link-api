@@ -1,2 +1,1 @@
-from .urls import ShortUrls
-
+from .urls import ShortUrls  # noqa

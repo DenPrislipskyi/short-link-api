@@ -1,15 +1,17 @@
-import string
 import secrets
-from sqlalchemy.ext.asyncio import AsyncSession
+import string
+
 from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.core.config import get_settings
-from src.models.urls import ShortUrls
 from src.core.exceptions import ShortcodeAlreadyExists
+from src.models.urls import ShortUrls
 
 
 class ShortenService:
     SHORTCODE_CHARS = string.ascii_letters + string.digits + "_"
+
     def __init__(self, session: AsyncSession):
         self.session = session
         self.settings = get_settings()

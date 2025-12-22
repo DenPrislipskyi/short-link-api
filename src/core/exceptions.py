@@ -1,7 +1,7 @@
-from fastapi.responses import JSONResponse
 from dataclasses import dataclass
-from fastapi import FastAPI
-from fastapi import Request
+
+from fastapi import FastAPI, Request
+from fastapi.responses import JSONResponse
 
 
 @dataclass(eq=False)
