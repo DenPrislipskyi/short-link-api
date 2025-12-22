@@ -6,6 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
     PROJECT_NAME: str
+    SHORTCODE_LENGTH: int
 
     DATABASE_URL: PostgresDsn
     DB_POOL_SIZE: int

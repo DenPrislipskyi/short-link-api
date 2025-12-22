@@ -1,8 +1,8 @@
 """add ShortUrls model
 
-Revision ID: 62bca982167c
+Revision ID: c29fe8ae52ae
 Revises: 
-Create Date: 2025-12-22 16:36:07.023931
+Create Date: 2025-12-22 20:50:08.643821
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '62bca982167c'
+revision: str = 'c29fe8ae52ae'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -25,7 +25,7 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('shortcode', sa.String(), nullable=False),
     sa.Column('url', sa.String(), nullable=False),
-    sa.Column('update_id', sa.Integer(), nullable=False),
+    sa.Column('update_id', sa.UUID(), nullable=False),
     sa.Column('created_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.TIMESTAMP(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id', name=op.f('short_urls_pkey')),
