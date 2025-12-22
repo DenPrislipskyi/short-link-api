@@ -1,10 +1,9 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.core.database import get_session
 from src.schemas.schema import ShortenCreateRequest, ShortenCreateResponse
 from src.services.shorten import ShortenService
-from src.core.database import get_session
-
 
 router = APIRouter(tags=["url"])
 

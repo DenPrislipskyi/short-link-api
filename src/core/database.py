@@ -2,8 +2,8 @@ from contextlib import asynccontextmanager
 from datetime import datetime
 from functools import lru_cache
 from typing import AsyncIterable
-from alembic.config import Config
 
+from alembic.config import Config
 from pydantic import PostgresDsn
 from sqlalchemy import func, MetaData, TIMESTAMP
 from sqlalchemy.ext.asyncio import (
@@ -28,7 +28,9 @@ POSTGRES_INDEXES_NAMING_CONVENTION = {
 class Base(DeclarativeBase):
     __abstract__ = True
     metadata = MetaData(naming_convention=POSTGRES_INDEXES_NAMING_CONVENTION)
-    created_at: Mapped[datetime] = mapped_column(TIMESTAMP(timezone=True), server_default=func.now())
+    created_at: Mapped[datetime] = mapped_column(
+        TIMESTAMP(timezone=True), server_default=func.now()
+    )
     updated_at: Mapped[datetime] = mapped_column(
         TIMESTAMP(timezone=True), server_default=func.now(), onupdate=func.now()
     )
@@ -75,11 +77,15 @@ async def open_db_session() -> AsyncSession:
         await session.close()
 
 
-def get_alembic_config(database_url: PostgresDsn, script_location: str = "migrations") -> Config:
+def get_alembic_config(
+    database_url: PostgresDsn, script_location: str = "migrations"
+) -> Config:
     alembic_config = Config()
     alembic_config.set_main_option("script_location", script_location)
     alembic_config.set_main_option(
         "sqlalchemy.url",
-        database_url.unicode_string().replace("postgresql+asyncpg", "postgresql+psycopg"),
+        database_url.unicode_string().replace(
+            "postgresql+asyncpg", "postgresql+psycopg"
+        ),
     )
     return alembic_config

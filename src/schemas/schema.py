@@ -1,7 +1,8 @@
-from pydantic import BaseModel, model_validator
 from typing import Optional
 from urllib.parse import urlparse
 from uuid import UUID
+
+from pydantic import BaseModel, model_validator
 
 from src.core.exceptions import InvalidUrlOrShortcode, UrlNotProvided
 
