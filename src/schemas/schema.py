@@ -1,4 +1,3 @@
-from typing import Optional
 from urllib.parse import urlparse
 from uuid import UUID
 
@@ -9,7 +8,7 @@ from src.core.exceptions import InvalidUrlOrShortcode, UrlNotProvided
 
 class ShortenCreateRequest(BaseModel):
     url: str
-    shortcode: Optional[str] = None
+    shortcode: str | None = None
 
     @model_validator(mode="before")
     @classmethod
@@ -28,3 +27,24 @@ class ShortenCreateRequest(BaseModel):
 class ShortenCreateResponse(BaseModel):
     shortcode: str
     update_id: UUID
+
+
+class ShortenUpdateRequest(BaseModel):
+    url: str
+
+    @model_validator(mode="before")
+    @classmethod
+    def validate_url(cls, values: dict) -> dict:
+        url = values.get("url")
+        if not url:
+            raise UrlNotProvided()
+
+        parsed = urlparse(url)
+        if not (parsed.scheme and parsed.netloc):
+            raise InvalidUrlOrShortcode("The provided url is invalid")
+
+        return values
+
+
+class ShortenUpdateResponse(BaseModel):
+    shortcode: str

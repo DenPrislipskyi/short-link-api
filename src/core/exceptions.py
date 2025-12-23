@@ -1,73 +1,50 @@
-from dataclasses import dataclass
-
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 
 
-@dataclass(eq=False)
-class InvalidUrlOrShortcode(Exception):
+class APIException(Exception):
+    status_code = 500
+    default_message = "Internal server error"
+
+    def __init__(self, message: str | None = None):
+        self.message = message or self.default_message
+        super().__init__(self.message)
+
+
+class InvalidUrlOrShortcode(APIException):
     status_code = 412
-
-    @property
-    def title(self) -> str:
-        return "The provided shortcode or url is invalid"
+    default_message = "The provided shortcode/url is invalid"
 
 
-@dataclass(eq=False)
-class ShortcodeAlreadyExists(Exception):
+class ShortcodeAlreadyExists(APIException):
     status_code = 409
-
-    @property
-    def title(self) -> str:
-        return "Shortcode already in use"
+    default_message = "Shortcode already in use"
 
 
-@dataclass(eq=False)
-class UrlNotProvided(Exception):
+class UrlNotProvided(APIException):
     status_code = 400
-
-    @property
-    def title(self) -> str:
-        return "Url not present"
+    default_message = "Url not present"
 
 
-async def url_not_provided(request: Request, exc: UrlNotProvided) -> JSONResponse:
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"message": exc.title},
-    )
+class UpdateIdDoesNotExist(APIException):
+    status_code = 401
+    default_message = "The provided update ID does not exist"
 
 
-async def shortcode_already_exists(
-    request: Request, exc: ShortcodeAlreadyExists
+class ShortcodeNotFound(APIException):
+    status_code = 404
+    default_message = "Shortcode not found"
+
+
+async def api_exception_handler(
+    request: Request,
+    exc: APIException,
 ) -> JSONResponse:
     return JSONResponse(
         status_code=exc.status_code,
-        content={"message": exc.title},
+        content={"message": exc.message},
     )
 
 
-async def invalid_url_or_shortcode(
-    request: Request, exc: InvalidUrlOrShortcode
-) -> JSONResponse:
-    return JSONResponse(
-        status_code=exc.status_code,
-        content={"message": exc.title},
-    )
-
-
-def add_exceptions_handlers(
-    app: FastAPI,
-) -> None:
-    app.add_exception_handler(
-        UrlNotProvided,
-        url_not_provided,
-    )
-    app.add_exception_handler(
-        ShortcodeAlreadyExists,
-        shortcode_already_exists,
-    )
-    app.add_exception_handler(
-        InvalidUrlOrShortcode,
-        invalid_url_or_shortcode,
-    )
+def add_exceptions_handlers(app: FastAPI) -> None:
+    app.add_exception_handler(APIException, api_exception_handler)
