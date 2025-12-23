@@ -10,9 +10,11 @@ class Settings(BaseSettings):
 
     DATABASE_URL: PostgresDsn
     DB_POOL_SIZE: int
-    MIGRATION_ON_STARTUP: bool = False
+    MIGRATION_ON_STARTUP: bool = True
 
-    model_config = SettingsConfigDict(case_sensitive=True, frozen=True, env_file=".env", extra="ignore")
+    model_config = SettingsConfigDict(
+        case_sensitive=True, frozen=True, env_file=".env", extra="ignore"
+    )
 
 
 @lru_cache
