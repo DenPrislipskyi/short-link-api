@@ -1,5 +1,5 @@
 services:
-    short-link-api:
+    api:
       build: .
       restart: unless-stopped
       env_file:
@@ -7,7 +7,7 @@ services:
       ports:
         - "8080:8080"
       volumes:
-        - ./:/short-link-api
+        - ./:/app
       networks:
         - short-net
       depends_on:

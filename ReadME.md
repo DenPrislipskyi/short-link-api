@@ -7,7 +7,7 @@ This project is a Python-based web service that allows users to shorten URLs, si
 ### Prerequisites
 
 - Docker and Docker Compose installed
-- A `.env` file in the root directory, you can create it by copying the provided `dist.env` or run the command:
+- A `.env` file in the root directory. You can create it by copying the provided `dist.env` file or by running the command:
 
 ```bash
     cp dist.env .env
@@ -38,28 +38,41 @@ Alternatively, you can use Postman or any HTTP client of your choice.
 
 
 
+### Database Administration
+
+PgAdmin has been added for convenient database inspection and management:
+
+**[http://localhost:5050/browser/](http://localhost:5050/browser/)**
+
+To log in and connect to the database, use the credentials defined in the `.env` file.
+
+
 ### Running Tests
 
-To run unit tests:
+First, enter the application container using the following command:
 
 ```bash
-    poetry run pytest
+    docker compose exec api /bin/bash
+```
+
+Then, run the tests with command:
+
+```
+  pytest
 ```
 
 
 
-###  Pre-commit Hooks
+### Pre-commit Hooks
 
-To activate and use the pre-commit hooks:
-
-```bash
-    pre-commit install
-```
+The project includes a `.pre-commit-config.yaml` file, which automatically runs code checks and the linter before each commit.
 
 
 
 # Potential Improvements
 
+- Add `redis` as a caching layer for frequently accessed short URLs to significantly speed up redirects and reduce database load.
 - Add more validation for `shortcodes` to ensure they meet certain standards.
+- Add centralized, structured `logging` to improve observability, simplify debugging, and support effective monitoring in production environments.
 - The update endpoint was initially documented as a `POST` method. It has been changed to `PATCH` to comply with RESTful principles.
 - Implement integration tests to cover the full workflow of the service, not just unit tests.
