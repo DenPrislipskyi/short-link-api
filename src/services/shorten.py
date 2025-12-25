@@ -1,5 +1,6 @@
 import secrets
 import string
+from datetime import datetime, timezone
 from uuid import UUID
 
 from sqlalchemy import select
@@ -65,10 +66,20 @@ class ShortenService:
 
         return short_url
 
-    async def get_by_shortcode(self, shortcode: str) -> str | None:
+    async def redirect(self, shortcode: str) -> str:
         short_url = await self._get_by_shortcode(shortcode)
 
         if not short_url:
             raise ShortcodeNotFound()
 
+        short_url.redirect_count += 1
+        short_url.last_redirect_at = datetime.now(timezone.utc)
+        await self.session.commit()
+
         return short_url.url
+
+    async def get_stats(self, shortcode: str) -> ShortUrls:
+        short_url = await self._get_by_shortcode(shortcode)
+        if not short_url:
+            raise ShortcodeNotFound()
+        return short_url

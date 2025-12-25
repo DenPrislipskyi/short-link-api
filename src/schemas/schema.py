@@ -1,7 +1,9 @@
+from datetime import datetime
 from urllib.parse import urlparse
 from uuid import UUID
 
 from pydantic import BaseModel, model_validator
+from pydantic import Field
 
 from src.core.exceptions import InvalidUrlOrShortcode, UrlNotProvided
 
@@ -48,3 +50,11 @@ class ShortenUpdateRequest(BaseModel):
 
 class ShortenUpdateResponse(BaseModel):
     shortcode: str
+
+
+class ShortenStatsResponse(BaseModel):
+    created: datetime
+    last_redirect: datetime | None = Field(alias="lastRedirect")
+    redirect_count: int = Field(alias="redirectCount")
+
+    model_config = {"populate_by_name": True}
