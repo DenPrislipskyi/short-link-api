@@ -33,8 +33,8 @@ FROM python-base as production
 
 COPY --from=builder-base $PYSETUP_PATH $PYSETUP_PATH
 
-WORKDIR short-link-api/
+WORKDIR app/
 
-COPY . /short-link-api/
+COPY . /app/
 
 ENTRYPOINT ["uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8080", "--reload"]

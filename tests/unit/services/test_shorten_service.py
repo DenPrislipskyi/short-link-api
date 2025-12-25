@@ -94,20 +94,41 @@ async def test_get_by_shortcode_raises_if_not_found(mock_session):
     service._get_by_shortcode = AsyncMock(return_value=None)
 
     with pytest.raises(ShortcodeNotFound):
-        await service.get_by_shortcode("missing")
+        await service.redirect("missing")
+
+    mock_session.commit.assert_not_awaited()
 
 
 @pytest.mark.asyncio
-async def test_get_by_shortcode_returns_url(mock_session):
+async def test_redirect_increments_counter_and_returns_url(mock_session):
     service = ShortenService(mock_session)
 
     service._get_by_shortcode = AsyncMock(
         return_value=ShortUrls(
             url="https://example.com",
             shortcode="abc",
+            redirect_count=0,
+            last_redirect_at=None,
         )
     )
 
-    result = await service.get_by_shortcode("abc")
+    result = await service.redirect("abc")
 
     assert result == "https://example.com"
+    mock_session.commit.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_get_stats_returns_short_url(mock_session):
+    service = ShortenService(mock_session)
+
+    short = ShortUrls(
+        url="https://example.com",
+        shortcode="abc",
+        redirect_count=3,
+    )
+    service._get_by_shortcode = AsyncMock(return_value=short)
+
+    result = await service.get_stats("abc")
+
+    assert result is short

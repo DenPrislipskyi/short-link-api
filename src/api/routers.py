@@ -7,6 +7,7 @@ from src.core.database import get_session
 from src.schemas.schema import (
     ShortenCreateRequest,
     ShortenCreateResponse,
+    ShortenStatsResponse,
     ShortenUpdateRequest,
     ShortenUpdateResponse,
 )
@@ -52,15 +53,34 @@ async def update_short_url(
     return ShortenUpdateResponse(shortcode=short_url.shortcode)
 
 
-@router.get("/{shortcode}/stats", status_code=302)
+@router.get("/{shortcode}", status_code=302)
 async def redirect_by_shortcode(
     shortcode: str,
     session: AsyncSession = Depends(get_session),
 ) -> RedirectResponse:
     service = ShortenService(session)
-    short_url = await service.get_by_shortcode(shortcode)
+    url = await service.redirect(shortcode)
 
     return RedirectResponse(
-        url=short_url,
+        url=url,
         status_code=302,
+    )
+
+
+@router.get(
+    "/{shortcode}/stats",
+    status_code=200,
+    response_model=ShortenStatsResponse,
+)
+async def shortcode_stats(
+    shortcode: str,
+    session: AsyncSession = Depends(get_session),
+) -> ShortenStatsResponse:
+    service = ShortenService(session)
+    short_url = await service.get_stats(shortcode)
+
+    return ShortenStatsResponse(
+        created=short_url.created_at,
+        last_redirect=short_url.last_redirect_at,
+        redirect_count=short_url.redirect_count,
     )
