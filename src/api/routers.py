@@ -36,7 +36,7 @@ async def create_short_url(
     )
 
 
-@router.patch(
+@router.post(
     "/update/{update_id}",
     status_code=201,
     response_model=ShortenUpdateResponse,
@@ -52,7 +52,7 @@ async def update_short_url(
     return ShortenUpdateResponse(shortcode=short_url.shortcode)
 
 
-@router.get("/{shortcode}", status_code=302)
+@router.get("/{shortcode}/stats", status_code=302)
 async def redirect_by_shortcode(
     shortcode: str,
     session: AsyncSession = Depends(get_session),

@@ -74,5 +74,5 @@ The project includes a `.pre-commit-config.yaml` file, which automatically runs 
 - Add `redis` as a caching layer for frequently accessed short URLs to significantly speed up redirects and reduce database load.
 - Add more validation for `shortcodes` to ensure they meet certain standards.
 - Add centralized, structured `logging` to improve observability, simplify debugging, and support effective monitoring in production environments.
-- The update endpoint was initially documented as a `POST` method. It has been changed to `PATCH` to comply with RESTful principles.
+- To discuss business logic and REST principles.
 - Implement integration tests to cover the full workflow of the service, not just unit tests.
